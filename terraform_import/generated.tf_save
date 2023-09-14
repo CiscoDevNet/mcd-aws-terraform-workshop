@@ -1,0 +1,315 @@
+# __generated__ by Terraform
+# Please review these resources and move them into your main configuration files.
+
+# __generated__ by Terraform from "2"
+resource "valtix_policy_rule_set" "policy-ruleset" {
+  child_rule_set_ids = null
+  description        = "Cisco created sample egress policy rule set."
+  group_member_ids   = null
+  name               = "ciscomcd-sample-egress-policy-ruleset"
+  type               = null
+}
+
+# __generated__ by Terraform from "AWS_Test_Acct"
+resource "valtix_cloud_account" "mcd_cloud_account" {
+  aws_access_key_id        = null
+  aws_access_secret        = null
+  aws_account_number       = "562453961564"
+  aws_credentials_type     = null
+  aws_iam_role             = "arn:aws:iam::562453961564:role/ciscomcd-controller-role"
+  aws_iam_role_external_id = "ntnxhqddvjjzkagbbqrbqljrzbajukgtofagxmgsxrqspwthunycqhaftzxmxvra"
+  aws_inventory_iam_role   = "arn:aws:iam::562453961564:role/ciscomcd-inventory-role"
+  azure_application_id     = null
+  azure_client_secret      = null
+  azure_directory_id       = null
+  azure_subscription_id    = null
+  csp_type                 = "AWS"
+  description              = null
+  gcp_credentials_file     = null
+  gcp_project_id           = null
+  name                     = "AWS_Test_Acct"
+  inventory_monitoring {
+    refresh_interval = 60
+    regions          = ["ap-northeast-1", "ap-northeast-2", "ap-northeast-3", "ap-south-1", "ap-southeast-1", "ap-southeast-2", "ca-central-1", "eu-central-1", "eu-north-1", "eu-west-1", "eu-west-2", "eu-west-3", "sa-east-1", "us-east-1", "us-east-2", "us-west-1", "us-west-2"]
+  }
+}
+
+# __generated__ by Terraform from "3"
+resource "valtix_policy_rules" "egress_ew_policy_rules" {
+  rule_set_id = 3
+}
+
+# __generated__ by Terraform from "rqlc-d9da504a485d4a4f"
+resource "aws_route53_resolver_query_log_config" "mcd_query_log_config" {
+  destination_arn = "arn:aws:s3:::mcd-cloud-trail-logs-ffc51f4a-a47c-473a-9207-3d3f734e8a5e"
+  name            = "valtix-route53-query-logs-yxzftpgarghbfpls"
+  tags = {
+    Name        = "valtix-route53-query-logs-yxzftpgarghbfpls"
+    valtix_acct = "CDO_cisco-dstaudt"
+  }
+  tags_all = {
+    Name        = "valtix-route53-query-logs-yxzftpgarghbfpls"
+    valtix_acct = "CDO_cisco-dstaudt"
+  }
+}
+
+# __generated__ by Terraform from "tgw-0642dfc29ac2ca43f"
+resource "aws_ec2_transit_gateway" "mcd_transit_gateway" {
+  amazon_side_asn                 = 64512
+  auto_accept_shared_attachments  = "disable"
+  default_route_table_association = "disable"
+  default_route_table_propagation = "disable"
+  description                     = null
+  dns_support                     = "enable"
+  multicast_support               = "disable"
+  tags = {
+    Name        = "mcd-service-vpc-tgw"
+    valtix_acct = "CDO_cisco-dstaudt"
+  }
+  tags_all = {
+    Name        = "mcd-service-vpc-tgw"
+    valtix_acct = "CDO_cisco-dstaudt"
+  }
+  transit_gateway_cidr_blocks = []
+  vpn_ecmp_support            = "enable"
+}
+
+# __generated__ by Terraform from "sg-0c35d171b388b2d17"
+resource "aws_security_group" "mgmt_security_group" {
+  description = "mcd-service-vpc-mgmt-sg"
+  egress = [{
+    cidr_blocks      = ["0.0.0.0/0"]
+    description      = ""
+    from_port        = 0
+    ipv6_cidr_blocks = []
+    prefix_list_ids  = []
+    protocol         = "-1"
+    security_groups  = []
+    self             = false
+    to_port          = 0
+  }]
+  ingress                = []
+  name                   = "mcd-service-vpc-mgmt-sg"
+  name_prefix            = null
+  revoke_rules_on_delete = null
+  tags = {
+    Name                = "mcd-service-vpc-mgmt-sg"
+    valtix_acct         = "CDO_cisco-dstaudt"
+    valtix_services_vpc = "true"
+  }
+  tags_all = {
+    Name                = "mcd-service-vpc-mgmt-sg"
+    valtix_acct         = "CDO_cisco-dstaudt"
+    valtix_services_vpc = "true"
+  }
+  vpc_id = "vpc-02e9497826fcd46fe"
+}
+
+# __generated__ by Terraform from "sg-0c32479905c0a3f17"
+resource "aws_security_group" "datapath_security_group" {
+  description = "mcd-service-vpc-datapath-sg"
+  egress = [{
+    cidr_blocks      = ["0.0.0.0/0"]
+    description      = ""
+    from_port        = 0
+    ipv6_cidr_blocks = []
+    prefix_list_ids  = []
+    protocol         = "-1"
+    security_groups  = []
+    self             = false
+    to_port          = 0
+  }]
+  ingress = [{
+    cidr_blocks      = ["10.100.0.0/16"]
+    description      = "Open all port access"
+    from_port        = 6081
+    ipv6_cidr_blocks = []
+    prefix_list_ids  = []
+    protocol         = "udp"
+    security_groups  = []
+    self             = false
+    to_port          = 6081
+    }, {
+    cidr_blocks      = ["10.100.0.0/16"]
+    description      = "Open all port access"
+    from_port        = 65534
+    ipv6_cidr_blocks = []
+    prefix_list_ids  = []
+    protocol         = "tcp"
+    security_groups  = []
+    self             = false
+    to_port          = 65534
+  }]
+  name                   = "mcd-service-vpc-datapath-sg"
+  name_prefix            = null
+  revoke_rules_on_delete = null
+  tags = {
+    Name                = "mcd-service-vpc-datapath-sg"
+    valtix_acct         = "CDO_cisco-dstaudt"
+    valtix_services_vpc = "true"
+  }
+  tags_all = {
+    Name                = "mcd-service-vpc-datapath-sg"
+    valtix_acct         = "CDO_cisco-dstaudt"
+    valtix_services_vpc = "true"
+  }
+  vpc_id = "vpc-02e9497826fcd46fe"
+}
+
+# __generated__ by Terraform from "fl-0e6c2fd2f88cb18fb"
+resource "aws_flow_log" "mcd_flow_log" {
+  deliver_cross_account_role = null
+  eni_id                     = null
+  iam_role_arn               = null
+  log_destination            = "arn:aws:s3:::mcd-cloud-trail-logs-ffc51f4a-a47c-473a-9207-3d3f734e8a5e"
+  log_destination_type       = "s3"
+  log_format                 = "$${account-id} $${action} $${az-id} $${bytes} $${dstaddr} $${dstport} $${end} $${flow-direction} $${instance-id} $${interface-id} $${log-status} $${packets} $${pkt-dst-aws-service} $${pkt-dstaddr} $${pkt-src-aws-service} $${pkt-srcaddr} $${protocol} $${region} $${srcaddr} $${srcport} $${start} $${sublocation-id} $${sublocation-type} $${subnet-id} $${tcp-flags} $${traffic-path} $${type} $${version} $${vpc-id}"
+  max_aggregation_interval   = 60
+  subnet_id                  = null
+  tags = {
+    Name        = "valtix-vpc-flow-logs-vlmgzfxoeerfgzse"
+    valtix_acct = "CDO_cisco-dstaudt"
+  }
+  tags_all = {
+    Name        = "valtix-vpc-flow-logs-vlmgzfxoeerfgzse"
+    valtix_acct = "CDO_cisco-dstaudt"
+  }
+  traffic_type                  = "ALL"
+  transit_gateway_attachment_id = null
+  transit_gateway_id            = null
+  vpc_id                        = "vpc-0f4cae483fba517f7"
+  destination_options {
+    file_format                = "plain-text"
+    hive_compatible_partitions = false
+    per_hour_partition         = false
+  }
+}
+
+# __generated__ by Terraform
+resource "valtix_service_vpc" "mcd_service_vpc" {
+  availability_zones   = ["us-east-1a", "us-east-1b"]
+  azure_resource_group = null
+  cidr                 = null
+  csp_account_name     = "AWS_Test_Acct"
+  management_cidr      = null
+  name                 = null
+  region               = "us-east-1"
+  transit_gateway_id   = "tgw-0642dfc29ac2ca43f"
+  use_nat_gateway      = false
+}
+
+# __generated__ by Terraform
+resource "aws_vpc" "aws_service_vpc" {
+  assign_generated_ipv6_cidr_block     = false
+  cidr_block                           = "10.100.0.0/16"
+  enable_dns_hostnames                 = false
+  enable_dns_support                   = true
+  enable_network_address_usage_metrics = false
+  instance_tenancy                     = "default"
+  ipv4_ipam_pool_id                    = null
+  ipv4_netmask_length                  = null
+  ipv6_cidr_block                      = null
+  ipv6_cidr_block_network_border_group = null
+  ipv6_ipam_pool_id                    = null
+  ipv6_netmask_length                  = 0
+  tags = {
+    Name                = "mcd-service-vpc"
+    valtix_acct         = "CDO_cisco-dstaudt"
+    valtix_services_vpc = "true"
+  }
+  tags_all = {
+    Name                = "mcd-service-vpc"
+    valtix_acct         = "CDO_cisco-dstaudt"
+    valtix_services_vpc = "true"
+  }
+}
+
+# __generated__ by Terraform
+resource "aws_vpc" "app_vpc" {
+  assign_generated_ipv6_cidr_block     = false
+  cidr_block                           = "10.100.0.0/16"
+  enable_dns_hostnames                 = false
+  enable_dns_support                   = true
+  enable_network_address_usage_metrics = false
+  instance_tenancy                     = "default"
+  ipv4_ipam_pool_id                    = null
+  ipv4_netmask_length                  = null
+  ipv6_cidr_block                      = null
+  ipv6_cidr_block_network_border_group = null
+  ipv6_ipam_pool_id                    = null
+  ipv6_netmask_length                  = 0
+  tags = {
+    Name                = "mcd-service-vpc"
+    valtix_acct         = "CDO_cisco-dstaudt"
+    valtix_services_vpc = "true"
+  }
+  tags_all = {
+    Name                = "mcd-service-vpc"
+    valtix_acct         = "CDO_cisco-dstaudt"
+    valtix_services_vpc = "true"
+  }
+}
+
+# __generated__ by Terraform from "egress-us-east-1-gw-01"
+resource "valtix_gateway" "mcd_internet_gateway" {
+  aws_gateway_lb            = true
+  aws_iam_role_firewall     = "arn:aws:iam::562453961564:role/ciscomcd-gateway-role"
+  azure_gateway_lb          = false
+  azure_resource_group      = null
+  azure_user_identity_id    = null
+  azure_user_name           = null
+  csp_account_name          = "AWS_Test_Acct"
+  datapath_security_group   = "sg-0c32479905c0a3f17"
+  description               = null
+  diagnostics_profile       = 0
+  gateway_image             = "23.04-15"
+  gateway_state             = "ACTIVE"
+  gcp_service_account_email = null
+  gcp_user_name             = null
+  health_check_port         = 65534
+  instance_type             = "AWS_M5_LARGE"
+  log_profile               = 0
+  max_instances             = 1
+  mgmt_security_group       = "sg-0c35d171b388b2d17"
+  mgmt_vpc_id               = null
+  min_instances             = 1
+  mode                      = "HUB"
+  name                      = "egress-us-east-1-gw-01"
+  ntp_profile               = 0
+  packet_capture_profile    = 0
+  policy_rule_set_id        = 3
+  region                    = "us-east-1"
+  security_type             = "EGRESS"
+  ssh_key_pair              = "mcd-lab-access"
+  ssh_public_key            = null
+  tags                      = null
+  transit_gateway_id        = null
+  username                  = null
+  vpc_id                    = "2"
+  wait_for_gateway_state    = null
+  wait_until_gateway_active = null
+  gateway_gwlb_endpoints {
+  }
+  gateway_gwlb_endpoints {
+  }
+  instance_details {
+    availability_zone = "us-east-1a"
+    datapath_subnet   = "subnet-02d5045794bbaeb6d"
+    mgmt_subnet       = "subnet-058fdb6b9d35e8f08"
+    private_subnet    = null
+  }
+  instance_details {
+    availability_zone = "us-east-1b"
+    datapath_subnet   = "subnet-0ba736f57d3b26011"
+    mgmt_subnet       = "subnet-097bc6f55fea6de59"
+    private_subnet    = null
+  }
+  settings {
+    name  = "gateway.snat_mode"
+    value = "0"
+  }
+  settings {
+    name  = "gateway.userid_code_enable"
+    value = "0"
+  }
+}

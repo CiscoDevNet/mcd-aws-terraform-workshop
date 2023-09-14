@@ -1,0 +1,30 @@
+# MCD instance - prod1 for main production
+deployment_name = "prod1"
+
+# Prefix to use when creating AWS resource names
+prefix = "mcd"
+
+# MCD Controller's AWS account number - can be obtained via the MCD admion UI setup sequence, from the generated onboarding CFT
+controller_aws_account_number = "change_me"
+
+# MCD API key file path/name
+valtix_api_key_file = "mcd_api_key.json"
+
+# S3 storage bucket name where AWS DNS/flow logs will be delivered - must be unique across all of AWS!
+s3_bucket = "change_me"
+
+# S3 log storage file retention time, # days
+object_duration = 1
+
+# Create a CloudTrail for logging?  Requires s3_bucket has been provided.
+create_cloud_trail = true
+
+# Name for the AWS account as it will appear in MCD admin UI
+valtix_aws_cloud_account_name = "AWS_Test_Acct"
+
+# Limit MCD inventory discovery access to this list of AWS regions 
+inventory_regions = ["us-east-1"]
+
+# AWS account credential profile and region
+region = "us-east-1"
+aws_credentials_profile = "default"
