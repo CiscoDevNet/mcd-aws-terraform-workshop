@@ -19,6 +19,9 @@ jobs:
     - name: Checkout Repo
       uses: actions/checkout@v4
 
+    - name: Write MCD API Key File
+      run: echo $MCD_API_KEY > mcd_api_key.json
+
     - name: Terraform Install
       run: sudo apt install -y terraform
 
