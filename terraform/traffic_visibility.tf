@@ -1,5 +1,5 @@
 data "aws_vpc" "app_vpc" {
-    id = var.app_vpc_id
+  id = var.app_vpc_id
 }
 
 data "aws_s3_bucket" "mcd_s3_bucket" {
@@ -13,7 +13,7 @@ resource "aws_route53_resolver_query_log_config" "mcd_query_log_config" {
     Name        = "valtix-route53-query-logs-${var.app_vpc_id}"
     valtix_acct = var.mcd_tenant_name
   }
-  depends_on = [ciscomcd_cloud_account.mcd_cloud_account]
+  # depends_on = [data.ciscomcd_cloud_account.mcd_cloud_account]
 }
 
 resource "aws_route53_resolver_query_log_config_association" "mcd_query_log_association" {

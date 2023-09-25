@@ -4,6 +4,12 @@ terraform {
       source = "CiscoDevNet/ciscomcd"
     }
   }
+
+  backend "s3" {
+    bucket = "mcd-cdo-cisco-dstaudt-230925-102409"
+    key    = "terraform/terraform.tfstate"
+    region = "us-east-1"
+  }
 }
 
 provider "aws" {
