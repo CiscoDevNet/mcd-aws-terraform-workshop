@@ -23,6 +23,9 @@ jobs:
     - name: Write MCD API Key File
       run: echo $MCD_API_KEY > mcd_api_key.json
 
+    - name: Terraform init
+      working-directory: ./terraform
+      run: terraform init
 
     - name: Terraform Validate
       working-directory: ./terraform
