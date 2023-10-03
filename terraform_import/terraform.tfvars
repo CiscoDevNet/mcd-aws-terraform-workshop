@@ -13,7 +13,7 @@ mcd_cloud_account_name = "AWS_Test_Acct"
 
 # AWS account credentials and details
 aws_region = "us-east-1"
-aws_availability_zones = ["us-east-1a"]
+aws_availability_s = "us-east-1a"
 aws_ssh_key_pair_id = "key-0dc1dd6a8d25acc01"
 
 # Limit MCD inventory discovery access to this list of AWS regions 

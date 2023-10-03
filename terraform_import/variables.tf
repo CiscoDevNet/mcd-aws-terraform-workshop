@@ -35,10 +35,10 @@ variable "aws_region" {
   default     = ""
 }
 
-variable "aws_availability_zones" {
-    description = "Availability zones in which to create the Service VPC Transit Gateway instances."
-    type        = list(string)
-    default     = []
+variable "aws_availability_zone" {
+    description = "Availability zone in which to create the Service VPC Transit Gateway instance."
+    type        = string
+    default     = ""
 }
 
 variable "aws_ssh_key_pair_id" {

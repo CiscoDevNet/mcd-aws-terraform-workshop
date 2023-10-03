@@ -11,7 +11,7 @@ resource "ciscomcd_service_vpc" "service_vpc" {
   name               = "mcd-service-vpc"
   csp_account_name   = ciscomcd_cloud_account.mcd_cloud_account.name
 
-  availability_zones = var.aws_availability_zones
+  availability_zones = [var.aws_availability_zone]
   cidr               = "10.100.0.0/16"
   region             = data.aws_region.current.name
   transit_gateway_id = aws_ec2_transit_gateway.mcd_transit_gateway.id

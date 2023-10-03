@@ -13,7 +13,7 @@ mcd_cloud_account_name = "AWS_Test_Acct"
 
 # AWS account credentials and details
 aws_region = "us-east-1"
-aws_availability_zones = ["us-east-1a"]
+aws_availability_zone = "us-east-1a"
 # aws_ssh_key_pair_id = "key-011ddf763065c9601"
 aws_ssh_key_pair_id = "key-0ea39cabad47a5827"
 

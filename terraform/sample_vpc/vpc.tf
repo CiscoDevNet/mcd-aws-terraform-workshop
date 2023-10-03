@@ -33,58 +33,31 @@ resource "aws_internet_gateway_attachment" "sample_igw_attachment" {
   vpc_id              = aws_vpc.sample_vpc.id
 }
 
-resource "aws_subnet" "sample_apps_subnet1" {
-  availability_zone = "us-east-1a"
+resource "aws_subnet" "sample_apps_subnet" {
+  availability_zone = var.aws_availability_zone
   vpc_id            = aws_vpc.sample_vpc.id
-  cidr_block        = "10.0.0.0/17"
-  tags              = {
-    Name = "${var.prefix}-z1-subnet"
-  }
-}
-
-resource "aws_subnet" "sample_apps_subnet2" {
-  availability_zone = "us-east-1b"
-  vpc_id            = aws_vpc.sample_vpc.id
-  cidr_block        = "10.0.128.0/17"
+  cidr_block        = "10.0.0.0/16"
   tags = {
-    Name = "${var.prefix}-z2-subnet"
+    Name = "${var.prefix}-subnet"
   }
 }
 
-resource "aws_route_table" "route_table_apps1" {
+resource "aws_route_table" "route_table_apps" {
   vpc_id = aws_vpc.sample_vpc.id
   tags   = {
-    Name = "${var.prefix}-z1-rt"
+    Name = "${var.prefix}-rt"
   }
 }
 
-resource "aws_route_table" "route_table_apps2" {
-  vpc_id = aws_vpc.sample_vpc.id
-  tags   = {
-    Name = "${var.prefix}-z2-rt"
-  }
-}
-
-resource "aws_route" "internet_route_apps1" {
+resource "aws_route" "internet_route_apps" {
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.sample_internet_gateway.id
-  route_table_id         = aws_route_table.route_table_apps1.id
+  route_table_id         = aws_route_table.route_table_apps.id
 }
 
-resource "aws_route" "internet_route_apps2" {
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = aws_internet_gateway.sample_internet_gateway.id
-  route_table_id         = aws_route_table.route_table_apps2.id
-}
-
-resource "aws_route_table_association" "apps_subnet_route_table_association1" {
-  route_table_id = aws_route_table.route_table_apps1.id
-  subnet_id      = aws_subnet.sample_apps_subnet1.id
-}
-
-resource "aws_route_table_association" "apps_subnet_route_table_association2" {
-  route_table_id = aws_route_table.route_table_apps2.id
-  subnet_id      = aws_subnet.sample_apps_subnet2.id
+resource "aws_route_table_association" "apps_subnet_route_table_association" {
+  route_table_id = aws_route_table.route_table_apps.id
+  subnet_id      = aws_subnet.sample_apps_subnet.id
 }
 
 resource "aws_security_group" "security_group_apps" {
@@ -166,9 +139,9 @@ resource "aws_iam_instance_profile" "spoke_instance_profile" {
   role = aws_iam_role.spoke_iam_role.name
 }
 
-resource "aws_instance" "app_instance1" {
+resource "aws_instance" "app_instance" {
   associate_public_ip_address = true
-  availability_zone           = "us-east-1a"
+  availability_zone           = var.aws_availability_zone
   ami                         = data.aws_ami.ubuntu2204.id
   iam_instance_profile        = aws_iam_instance_profile.spoke_instance_profile.name
   instance_type               = "t2.nano"
@@ -184,35 +157,10 @@ resource "aws_instance" "app_instance1" {
                                 <p>Welcome to App Instance 1</p>
                                 </body></html>
                                 EOT
-  subnet_id                   = aws_subnet.sample_apps_subnet1.id
+  subnet_id                   = aws_subnet.sample_apps_subnet.id
   vpc_security_group_ids      = [aws_security_group.security_group_apps.id]
   tags                        = {
-    Name = "${var.prefix}-z1-app"
-  }
-}
-
-resource "aws_instance" "app_instance2" {
-  associate_public_ip_address = true
-  availability_zone           = "us-east-1b"
-  ami                         = data.aws_ami.ubuntu2204.id
-  iam_instance_profile        = aws_iam_instance_profile.spoke_instance_profile.name
-  instance_type               = "t2.nano"
-  key_name                    = data.aws_key_pair.aws_ssh_key_pair.key_name
-  user_data                   = <<-EOT
-                                #! /bin/bash
-                                apt-get update
-                                apt-get upgrade -y
-                                apt-get install -y apache2
-                                apt-get install -y wget
-                                cat <<EOF > /var/www/html/index.html
-                                <html><body><h1>Hello World</h1>
-                                <p>Welcome to App Instance 2</p>
-                                </body></html>
-                                EOT
-  subnet_id                   = aws_subnet.sample_apps_subnet2.id
-  vpc_security_group_ids      = [aws_security_group.security_group_apps.id]
-  tags                        = {
-    Name = "${var.prefix}-z2-app"
+    Name = "${var.prefix}-app"
   }
 }
 
