@@ -1,5 +1,10 @@
 name: Terraform Apply
 
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+
 on:
   push:
     branches:
@@ -9,28 +14,25 @@ jobs:
   terraform_apply:
     name: Terraform Apply
     runs-on: ubuntu-latest
-    env:
-      AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_REGION: 'us-east-1'
 
     steps:
-    - uses: hashicorp/setup-terraform@v2
+      - uses: hashicorp/setup-terraform@v2
 
-    - name: Checkout Repo
-      uses: actions/checkout@v4
+      - name: Checkout Repo
+        uses: actions/checkout@v4
 
-    - name: Write MCD API Key File
-      run: echo $MCD_API_KEY > mcd_api_key.json
+      - name: Write MCD API Key File
+        working-directory: ./terraform
+        run: echo $MCD_API_KEY > mcd_api_key.json
 
-    - name: Terraform init
-      working-directory: ./terraform
-      run: terraform init
+      - name: Terraform init
+        working-directory: ./terraform
+        run: terraform init
 
-    - name: Terraform Validate
-      working-directory: ./terraform
-      run: terraform validate
+      - name: Terraform Validate
+        working-directory: ./terraform
+        run: terraform validate
 
-    - name: Terraform Apply
-      working-directory: ./terraform
-      run: terraform apply
+      - name: Terraform Apply
+        working-directory: ./terraform
+        run: terraform apply

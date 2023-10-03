@@ -1,8 +1,7 @@
 # Configuration variables
-
 variable "mcd_deployment_name" {
   description = "MCD instance (prod1 for main production)"
-  default     = "prod1"
+  default     = "prod1" # Production instance
 }
 
 variable "mcd_tenant_name" {
@@ -11,28 +10,22 @@ variable "mcd_tenant_name" {
 }
 
 variable "mcd_api_key_file" {
-  description = "MCD API Key json file name downloaded from the MCD Dashboard, required only when being run as root module"
+  description = "MCD API Key json file path downloaded from the MCD Dashboard."
   default     = ""
 }
 
-variable "mcd_controller_account_number" {
-  description = "Multicloud Defense Controller's Account Number"
+variable "mcd_controller_aws_account_number" {
+  description = "Multicloud Defense Controller's account number."
+  default     = "878511901175" # AMER region
 }
 
-
 variable "mcd_cross_account_external_id" {
-    description = "MCD cross-account IAM role external Id"
+    description = "MCD cross-account IAM role external Id."
     default = ""
 }
 
-variable "aws_credentials_profile" {
-  description = "AWS Credentials Profile Name, required only when run as root module"
-  default     = ""
-}
-
 variable "aws_region" {
-  description = "AWS Region, required only when being run as root module"
-  default     = ""
+  description = "AWS Region."
 }
 
 variable "aws_availability_zones" {
@@ -42,29 +35,12 @@ variable "aws_availability_zones" {
 }
 
 variable "aws_ssh_key_pair_id" {
-    description = "Id of the AWS EC2 network key pair to use when defining/accessing gatways resources."
-    default = ""
+    description = "ID of the AWS EC2 network key pair to use when defining/accessing gateways resources."
 }
 
 variable "mcd_cloud_account_name" {
   description = "Name used to represent the AWS Account in the MCD Dashboard."
   default     = ""
-}
-
-variable "app_vpc_id" {
-    description = "Target AWS VPC to monitor/protect"
-    type = string
-    default = ""
-}
-
-variable "aws_prefix" {
-  description = "Prefix for resources created in this template"
-  default     = "ciscomcd"
-}
-
-variable "mcd_s3_bucket_name" {
-  description = "S3 Bucket to store CloudTrail, Route53 Query Logs and VPC Flow Logs"
-  default = null
 }
 
 variable "object_duration" {

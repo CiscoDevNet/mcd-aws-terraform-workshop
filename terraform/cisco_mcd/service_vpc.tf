@@ -1,0 +1,44 @@
+resource "aws_ec2_transit_gateway" "mcd_transit_gateway" {
+  dns_support                 = "enable"
+  transit_gateway_cidr_blocks = []
+  vpn_ecmp_support            = "enable"
+  tags                        = {
+    Name        = "mcd-service-vpc-tgw"
+  }
+}
+
+resource "ciscomcd_service_vpc" "service_vpc" {
+  name               = "mcd-service-vpc"
+  csp_account_name   = ciscomcd_cloud_account.mcd_cloud_account.name
+
+  availability_zones = var.aws_availability_zones
+  cidr               = "10.100.0.0/16"
+  region             = data.aws_region.current.name
+  transit_gateway_id = aws_ec2_transit_gateway.mcd_transit_gateway.id
+}
+
+data "ciscomcd_policy_rule_set" "ciscomcd-sample-egress-policy-ruleset" {
+    name = "ciscomcd-sample-egress-policy-ruleset"
+}
+
+data "aws_key_pair" "aws_ssh_key_pair" {
+    key_pair_id = var.aws_ssh_key_pair_id
+}
+
+resource "ciscomcd_gateway" "mcd_gateway" {
+  name                  = "egress-${data.aws_region.current.name}-gw-01"
+  vpc_id                = ciscomcd_service_vpc.service_vpc.id
+
+  aws_gateway_lb        = true
+  aws_iam_role_firewall = aws_iam_instance_profile.mcd_gateway_instance_profile.name
+  csp_account_name      = ciscomcd_cloud_account.mcd_cloud_account.name
+  instance_type         = "AWS_M5_LARGE"
+  gateway_image         = "23.08-04"
+  gateway_state         = "ACTIVE"
+  mode                  = "HUB"
+  policy_rule_set_id    = data.ciscomcd_policy_rule_set.ciscomcd-sample-egress-policy-ruleset.id
+  region                = data.aws_region.current.name
+  security_type         = "EGRESS"
+  ssh_key_pair          = data.aws_key_pair.aws_ssh_key_pair.key_name
+}
+
