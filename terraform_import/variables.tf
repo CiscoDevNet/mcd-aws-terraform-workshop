@@ -6,8 +6,8 @@ variable "mcd_deployment_name" {
 }
 
 variable "mcd_tenant_name" {
-    description = "MCD account tenant name."
-    default = ""
+  description = "MCD account tenant name."
+  default     = ""
 }
 
 variable "mcd_api_key_file" {
@@ -17,12 +17,6 @@ variable "mcd_api_key_file" {
 
 variable "mcd_controller_account_number" {
   description = "Multicloud Defense Controller's Account Number"
-}
-
-
-variable "mcd_cross_account_external_id" {
-    description = "MCD cross-account IAM role external Id"
-    default = ""
 }
 
 variable "aws_credentials_profile" {
@@ -36,14 +30,14 @@ variable "aws_region" {
 }
 
 variable "aws_availability_zone" {
-    description = "Availability zone in which to create the Service VPC Transit Gateway instance."
-    type        = string
-    default     = ""
+  description = "Availability zone in which to create the Service VPC Transit Gateway instance."
+  type        = string
+  default     = ""
 }
 
 variable "aws_ssh_key_pair_id" {
-    description = "Id of the AWS EC2 network key pair to use when defining/accessing gatways resources."
-    default = ""
+  description = "Id of the AWS EC2 network key pair to use when defining/accessing gatways resources."
+  default     = ""
 }
 
 variable "mcd_cloud_account_name" {
@@ -52,9 +46,9 @@ variable "mcd_cloud_account_name" {
 }
 
 variable "app_vpc_id" {
-    description = "Target AWS VPC to monitor/protect"
-    type = string
-    default = ""
+  description = "Target AWS VPC to monitor/protect"
+  type        = string
+  default     = ""
 }
 
 variable "aws_prefix" {
@@ -64,7 +58,7 @@ variable "aws_prefix" {
 
 variable "mcd_s3_bucket_name" {
   description = "S3 Bucket to store CloudTrail, Route53 Query Logs and VPC Flow Logs"
-  default = null
+  default     = null
 }
 
 variable "object_duration" {
@@ -79,7 +73,7 @@ variable "create_cloud_trail" {
 }
 
 variable "mcd_inventory_regions" {
-  description = "Limit MCD inventory discovery access to this list of AWS regions" 
+  description = "Limit MCD inventory discovery access to this list of AWS regions"
   type        = list(string)
   default     = []
 }

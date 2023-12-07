@@ -5,8 +5,8 @@ variable "mcd_deployment_name" {
 }
 
 variable "mcd_tenant_name" {
-    description = "MCD account tenant name."
-    default = ""
+  description = "MCD account tenant name."
+  default     = ""
 }
 
 variable "mcd_api_key_file" {
@@ -19,23 +19,18 @@ variable "mcd_controller_aws_account_number" {
   default     = "878511901175" # AMER region
 }
 
-variable "mcd_cross_account_external_id" {
-    description = "MCD cross-account IAM role external Id."
-    default = ""
-}
-
 variable "aws_region" {
   description = "AWS Region."
 }
 
 variable "aws_availability_zone" {
-    description = "Availability zone in which to create the Service VPC Transit Gateway instances."
-    type        = string
-    default     = ""
+  description = "Availability zone in which to create the Service VPC Transit Gateway instances."
+  type        = string
+  default     = ""
 }
 
 variable "aws_ssh_key_pair_id" {
-    description = "ID of the AWS EC2 network key pair to use when defining/accessing gateways resources."
+  description = "ID of the AWS EC2 network key pair to use when defining/accessing gateways resources."
 }
 
 variable "mcd_cloud_account_name" {
@@ -55,7 +50,7 @@ variable "create_cloud_trail" {
 }
 
 variable "mcd_inventory_regions" {
-  description = "Limit MCD inventory discovery access to this list of AWS regions" 
+  description = "Limit MCD inventory discovery access to this list of AWS regions"
   type        = list(string)
   default     = []
 }

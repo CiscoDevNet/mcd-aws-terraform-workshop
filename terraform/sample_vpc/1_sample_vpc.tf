@@ -1,5 +1,5 @@
 data "aws_key_pair" "aws_ssh_key_pair" {
-    key_pair_id = var.aws_ssh_key_pair_id
+  key_pair_id = var.aws_ssh_key_pair_id
 }
 
 data "aws_ami" "ubuntu2204" {
@@ -17,13 +17,13 @@ data "aws_ami" "ubuntu2204" {
 
 resource "aws_vpc" "sample_vpc" {
   cidr_block = "10.0.0.0/16"
-  tags       = {
+  tags = {
     Name = "${var.prefix}-vpc"
   }
 }
 
 resource "aws_internet_gateway" "sample_internet_gateway" {
-  tags = { 
+  tags = {
     Name = "${var.prefix}-igw"
   }
 }
@@ -44,7 +44,7 @@ resource "aws_subnet" "sample_subnet" {
 
 resource "aws_route_table" "sample_route_table" {
   vpc_id = aws_vpc.sample_vpc.id
-  tags   = {
+  tags = {
     Name = "${var.prefix}-rt"
   }
 }
@@ -61,36 +61,36 @@ resource "aws_route_table_association" "sample_subnet_route_table_association" {
 }
 
 resource "aws_security_group" "sample_security_group" {
-  name        = "${var.prefix}-security-group"
-  vpc_id      = aws_vpc.sample_vpc.id
+  name   = "${var.prefix}-security-group"
+  vpc_id = aws_vpc.sample_vpc.id
   egress {
-    protocol = "-1"
-    from_port = 0
-    to_port = 0
+    protocol    = "-1"
+    from_port   = 0
+    to_port     = 0
     cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
-    protocol = "tcp"
-    from_port = 22
-    to_port = 22
+    protocol    = "tcp"
+    from_port   = 22
+    to_port     = 22
     cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
-    protocol = "tcp"
-    from_port = 80
-    to_port = 80
+    protocol    = "tcp"
+    from_port   = 80
+    to_port     = 80
     cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
-    protocol = "tcp"
-    from_port = 8000
-    to_port = 8000
+    protocol    = "tcp"
+    from_port   = 8000
+    to_port     = 8000
     cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
-    protocol = "tcp"
-    from_port = 443
-    to_port = 443
+    protocol    = "tcp"
+    from_port   = 443
+    to_port     = 443
     cidr_blocks = ["0.0.0.0/0"]
   }
   tags = {
@@ -99,7 +99,7 @@ resource "aws_security_group" "sample_security_group" {
 }
 
 resource "aws_iam_role" "spoke_iam_role" {
-  name               = "${var.prefix}-spoke-role"
+  name = "${var.prefix}-spoke-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -114,7 +114,7 @@ resource "aws_iam_role" "spoke_iam_role" {
       }
     ]
   })
-  path               = "/"
+  path = "/"
   inline_policy {
     name = "spoke-iam-policy"
     policy = jsonencode(
@@ -122,9 +122,9 @@ resource "aws_iam_role" "spoke_iam_role" {
         Version = "2012-10-17",
         Statement = [
           {
-            Action =  "*"
+            Action   = "*"
             Resource = "*"
-            Effect = "Allow"
+            Effect   = "Allow"
           }
         ]
       }
@@ -158,7 +158,7 @@ resource "aws_instance" "app_instance" {
                                 EOT
   subnet_id                   = aws_subnet.sample_subnet.id
   vpc_security_group_ids      = [aws_security_group.sample_security_group.id]
-  tags                        = {
+  tags = {
     Name = "${var.prefix}-app"
     // Step ??? - Custom Security Policies
     Category = "prod"

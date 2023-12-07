@@ -8,13 +8,11 @@ mcd_api_key_file = "mcd_api_key.json"
 mcd_controller_account_number = "878511901175"
 # MCD AWS cloud account name
 mcd_cloud_account_name = "AWS_Test_Acct"
-# MCD cross-account IAM role external Id
-# mcd_cross_account_external_id = "osikeqshlakavrzygqfnnugbpwdbjhlykqjrvgakupsvkbyrfgyluydkxcuvimtk" 
 
 # AWS account credentials and details
-aws_region = "us-east-1"
+aws_region            = "us-east-1"
 aws_availability_zone = "us-east-1a"
-aws_ssh_key_pair_id = "key-0dc1dd6a8d25acc01"
+aws_ssh_key_pair_id   = "key-0dc1dd6a8d25acc01"
 
 # Limit MCD inventory discovery access to this list of AWS regions 
 mcd_inventory_regions = ["us-east-1"]
