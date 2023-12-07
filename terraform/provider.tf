@@ -1,17 +1,21 @@
 terraform {
   required_providers {
+    time = {
+      source = "hashicorp/time"
+      version = "0.10.0"
+    }
     aws = {
       source  = "hashicorp/aws"
-      version = "5.19.0"
+      version = "5.29.0"
     }
     ciscomcd = {
       source = "CiscoDevNet/ciscomcd"
-      version = "0.2.3"
+      version = "0.2.4"
     }
   }
 
   backend "s3" {
-    bucket = "mcd-terraform-workshop-20231002"
+    bucket = "mcd-terraform-workshop-20231206"
     key    = "terraform/terraform.tfstate"
     region = "us-east-1"
   }

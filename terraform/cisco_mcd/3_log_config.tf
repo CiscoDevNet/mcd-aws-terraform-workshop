@@ -3,6 +3,29 @@ resource "aws_s3_bucket" "mcd_s3_bucket" {
   force_destroy = true
 }
 
+resource "aws_iam_role_policy" "s3_get_object" {
+  name     = "mcd_s3_get_object"
+  role     = aws_iam_role.mcd_controller_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = [
+          "s3:GetObject"
+        ],
+        Effect = "Allow",
+        Resource = [
+          "${aws_s3_bucket.mcd_s3_bucket.arn}/*"
+        ]
+      }
+    ]
+  })
+  depends_on = [
+    aws_s3_bucket.mcd_s3_bucket
+  ]
+}
+
 resource "aws_s3_bucket_server_side_encryption_configuration" "s3_bucket_encryption" {
   bucket = aws_s3_bucket.mcd_s3_bucket.id
   rule {
@@ -33,21 +56,28 @@ resource "aws_s3_bucket_lifecycle_configuration" "lifecycle" {
 
 data "aws_iam_policy_document" "mcd_s3_bucket_policy_document" {
   statement {
-    sid       = ""
+    sid       = "AWSCloudTrailAclCheck"
     effect    = "Allow"
-    resources = ["${aws_s3_bucket.mcd_s3_bucket.arn}"]
-    actions   = ["s3:GetBucketAcl"]
 
     principals {
       type        = "Service"
       identifiers = ["cloudtrail.amazonaws.com"]
     }
+
+    actions   = ["s3:GetBucketAcl"]
+    resources = [aws_s3_bucket.mcd_s3_bucket.arn]
   }
   statement {
-    sid       = ""
+    sid       = "AWSCloudTrailWrite"
     effect    = "Allow"
-    resources = ["${aws_s3_bucket.mcd_s3_bucket.arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["cloudtrail.amazonaws.com"]
+    }
+
     actions   = ["s3:PutObject"]
+    resources = ["${aws_s3_bucket.mcd_s3_bucket.arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*"]
 
     condition {
       test     = "StringEquals"
@@ -55,15 +85,11 @@ data "aws_iam_policy_document" "mcd_s3_bucket_policy_document" {
       values   = ["bucket-owner-full-control"]
     }
 
-    principals {
-      type        = "Service"
-      identifiers = ["cloudtrail.amazonaws.com"]
-    }
   }
   statement {
     sid       = ""
     effect    = "Allow"
-    resources = ["${aws_s3_bucket.mcd_s3_bucket.arn}"]
+    resources = [aws_s3_bucket.mcd_s3_bucket.arn]
     actions   = ["s3:GetBucketAcl"]
 
     principals {
@@ -92,9 +118,6 @@ data "aws_iam_policy_document" "mcd_s3_bucket_policy_document" {
 resource "aws_s3_bucket_policy" "mcd_s3_bucket_policy" {
   bucket     = aws_s3_bucket.mcd_s3_bucket.id
   policy     = data.aws_iam_policy_document.mcd_s3_bucket_policy_document.json
-  depends_on = [
-    aws_s3_bucket_public_access_block.mcd_s3_bucket_public_access_block
-  ]
 }
 
 resource "aws_route53_resolver_query_log_config" "mcd_dns_query_log_config" {
@@ -113,6 +136,8 @@ resource "aws_cloudtrail" "mcd_cloudtrail" {
     aws_s3_bucket_policy.mcd_s3_bucket_policy
   ]
 }
+
+data "aws_region" "current" {}
 
 resource "aws_s3_bucket_notification" "mcd_s3_bucket_notification" {
   bucket      = aws_s3_bucket.mcd_s3_bucket.id

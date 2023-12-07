@@ -1,11 +1,3 @@
-# Give the role a few seconds to finalize in AWS
-resource "time_sleep" "wait_for_controller_account" {
-  create_duration = "15s"
-  depends_on = [
-    aws_iam_role.mcd_controller_role
-  ]
-}
-
 resource "ciscomcd_cloud_account" "mcd_cloud_account" {
   name                     = var.mcd_cloud_account_name
   csp_type                 = "AWS"
@@ -18,6 +10,6 @@ resource "ciscomcd_cloud_account" "mcd_cloud_account" {
     regions = [data.aws_region.current.name]
   }
   depends_on = [
-    time_sleep.wait_for_controller_account
+    time_sleep.wait_for_controller_policy
   ]
 }

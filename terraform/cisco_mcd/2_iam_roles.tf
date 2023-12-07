@@ -14,6 +14,8 @@ resource "aws_iam_role" "mcd_inventory_role" {
   })
 }
 
+data "aws_caller_identity" "current" {}
+
 resource "aws_iam_role_policy" "mcd_inventory_policy" {
   name = "mcd-inventory-policy"
   role = aws_iam_role.mcd_inventory_role.id
@@ -55,6 +57,12 @@ resource "aws_iam_role" "mcd_gateway_role" {
   })
 }
 
+resource "aws_iam_instance_profile" "mcd_gateway_instance_profile" {
+  # Instance profile name must match the role name
+  name = aws_iam_role.mcd_gateway_role.name
+  role = aws_iam_role.mcd_gateway_role.name
+}
+
 resource "aws_iam_role_policy" "mcd_gateway_policy" {
   name = "mcd-gateway-policy"
   role = aws_iam_role.mcd_gateway_role.id
@@ -86,12 +94,6 @@ resource "aws_iam_role_policy" "mcd_gateway_policy" {
       }
     ]
   })
-}
-
-resource "aws_iam_instance_profile" "mcd_gateway_instance_profile" {
-  # Instance profile name must match the role name
-  name = aws_iam_role.mcd_gateway_role.name
-  role = aws_iam_role.mcd_gateway_role.name
 }
 
 resource "ciscomcd_external_id" "mcd_external_id" {
@@ -194,28 +196,19 @@ resource "aws_iam_role_policy" "mcd_controller_policy" {
       }
     ]
   })
-}
-
-resource "aws_iam_role_policy" "s3_get_object" {
-  name     = "mcd_s3_get_object"
-  role     = aws_iam_role.mcd_controller_role.id
-
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Action = [
-          "s3:GetObject"
-        ],
-        Effect = "Allow",
-        Resource = [
-          "${aws_s3_bucket.mcd_s3_bucket.arn}/*"
-        ]
-      }
-    ]
-  })
-  depends_on = [
-    aws_s3_bucket.mcd_s3_bucket
+  depends_on =  [
+    aws_iam_role_policy.mcd_inventory_policy,
+    aws_iam_role_policy.mcd_gateway_policy
   ]
 }
+
+# Give the policy a few seconds to replicate in AWS
+resource "time_sleep" "wait_for_controller_policy" {
+  create_duration = "30s"
+  depends_on = [
+    aws_iam_role_policy.mcd_controller_policy
+  ]
+}
+
+
 

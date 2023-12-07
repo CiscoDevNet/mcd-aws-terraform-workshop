@@ -33,7 +33,7 @@ resource "aws_internet_gateway_attachment" "sample_igw_attachment" {
   vpc_id              = aws_vpc.sample_vpc.id
 }
 
-resource "aws_subnet" "sample_apps_subnet" {
+resource "aws_subnet" "sample_subnet" {
   availability_zone = var.aws_availability_zone
   vpc_id            = aws_vpc.sample_vpc.id
   cidr_block        = "10.0.0.0/16"
@@ -42,27 +42,26 @@ resource "aws_subnet" "sample_apps_subnet" {
   }
 }
 
-resource "aws_route_table" "route_table_apps" {
+resource "aws_route_table" "sample_route_table" {
   vpc_id = aws_vpc.sample_vpc.id
   tags   = {
     Name = "${var.prefix}-rt"
   }
 }
 
-resource "aws_route" "internet_route_apps" {
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = aws_internet_gateway.sample_internet_gateway.id
-  route_table_id         = aws_route_table.route_table_apps.id
+# resource "aws_route" "sample_internet_route" {
+#   destination_cidr_block = "0.0.0.0/0"
+#   gateway_id         = aws_internet_gateway.sample_internet_gateway.id
+#   route_table_id     = aws_route_table.sample_route_table.id
+# }
+
+resource "aws_route_table_association" "sample_subnet_route_table_association" {
+  route_table_id = aws_route_table.sample_route_table.id
+  subnet_id      = aws_subnet.sample_subnet.id
 }
 
-resource "aws_route_table_association" "apps_subnet_route_table_association" {
-  route_table_id = aws_route_table.route_table_apps.id
-  subnet_id      = aws_subnet.sample_apps_subnet.id
-}
-
-resource "aws_security_group" "security_group_apps" {
-  name        = "${var.prefix}-apps-sg"
-  description = "Security group for the apps, used by applications."
+resource "aws_security_group" "sample_security_group" {
+  name        = "${var.prefix}-security-group"
   vpc_id      = aws_vpc.sample_vpc.id
   egress {
     protocol = "-1"
@@ -95,7 +94,7 @@ resource "aws_security_group" "security_group_apps" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   tags = {
-    Name = "${var.prefix}-apps"
+    Name = "${var.prefix}-security-group"
   }
 }
 
@@ -157,10 +156,12 @@ resource "aws_instance" "app_instance" {
                                 <p>Welcome to App Instance 1</p>
                                 </body></html>
                                 EOT
-  subnet_id                   = aws_subnet.sample_apps_subnet.id
-  vpc_security_group_ids      = [aws_security_group.security_group_apps.id]
+  subnet_id                   = aws_subnet.sample_subnet.id
+  vpc_security_group_ids      = [aws_security_group.sample_security_group.id]
   tags                        = {
     Name = "${var.prefix}-app"
+    // Step ??? - Custom Security Policies
+    Category = "prod"
   }
 }
 

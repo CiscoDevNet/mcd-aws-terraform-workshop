@@ -1,5 +1,5 @@
 variable "mcd_dns_query_log_config_id" {
-  description = "AWS Query Log Configuration ID"
+  description = "AWS query log configuration Id"
   default = ""
 }
 
@@ -23,8 +23,3 @@ resource "aws_flow_log" "app_vpc_flow_log" {
     Name = "${var.prefix}-mcd-flow-log"
   }
 }
-
-# resource "ciscomcd_spoke_vpc" "ciscomcd_spoke" {
-#   service_vpc_id = ciscomcd_service_vpc.service_vpc.id
-#   spoke_vpc_id   = "vpc-12345678912345678"
-# }

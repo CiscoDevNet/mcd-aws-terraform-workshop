@@ -14,5 +14,7 @@ variable "aws_availability_zone" {
 
 variable "mcd_controller_aws_account_number" {
   description = "Multicloud Defense Controller's account number."
+  default = ""
 }
+
 
