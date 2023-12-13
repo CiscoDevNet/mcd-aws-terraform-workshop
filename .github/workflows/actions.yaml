@@ -27,7 +27,7 @@ jobs:
 
       # - name: Write MCD API Key File
       #   working-directory: ./terraform
-      #   run: echo ${{ secrets.MCD_API_KEY }} > ./cisco_mcd/mcd_api_key.json
+      #   run: echo "${{ secrets.MCD_API_KEY }}" > ./cisco_mcd/mcd_api_key.json
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
