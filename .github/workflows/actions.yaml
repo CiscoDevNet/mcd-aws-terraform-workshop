@@ -25,9 +25,6 @@ jobs:
           role-to-assume: arn:aws:iam::257344898502:role/GitHubAction-AssumeRoleWithAction
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Sts GetCallerIdentity
-        run: aws sts get-caller-identity
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
@@ -49,8 +46,8 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan -input=false
+        run: terraform plan
 
       - name: Terraform Apply
         working-directory: ./terraform
-        run: terraform apply -auto-approve -input=false
+        run: terraform apply -auto-approve
