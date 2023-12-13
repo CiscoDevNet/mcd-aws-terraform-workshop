@@ -26,7 +26,8 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Write MCD API Key File
-        run: echo '${{ secrets.MCD_API_KEY }}' > cisco_mcd/mcd_api_key.json
+        working-directory: terraform
+        run: echo '${{ secrets.MCD_API_KEY }}' > ../cisco_mcd/mcd_api_key.json
 
       - working-directory: terraform
         run: cat ./cisco_mcd/mcd_api_key.json
