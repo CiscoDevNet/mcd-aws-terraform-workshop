@@ -35,7 +35,7 @@ jobs:
 
       - name: Write MCD API Key File
         working-directory: ./terraform
-        run: echo $MCD_API_KEY > ./cisco_mcd/mcd_api_key.json
+        run: echo ${{ MCD_API_KEY }} > ./cisco_mcd/mcd_api_key.json
 
       - name: Terraform init
         working-directory: ./terraform
