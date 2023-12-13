@@ -22,5 +22,5 @@ terraform {
 }
 
 provider "ciscomcd" {
-    api_key_file = file("./cisco_mcd/mcd_api_key.json")
+    api_key_file = file("cisco_mcd/mcd_api_key.json")
 }
