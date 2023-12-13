@@ -25,6 +25,9 @@ jobs:
           role-to-assume: arn:aws:iam::257344898502:role/GitHubAction-AssumeRoleWithAction
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
       - name: Write MCD API Key File
         working-directory: terraform
         run: echo '${{ secrets.MCD_API_KEY }}' > ../cisco_mcd/mcd_api_key.json
@@ -36,9 +39,6 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.6.6
-
-      - name: Checkout Repo
-        uses: actions/checkout@v4
 
       - name: Terraform init
         working-directory: terraform
