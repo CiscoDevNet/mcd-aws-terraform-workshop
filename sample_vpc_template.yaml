@@ -1,0 +1,295 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: "Prepare sample environment by adding a VPC, subnets, security-groups, etc."
+Metadata:
+    AWS::CloudFormation::Interface:
+        ParameterGroups:
+            - Label:
+                  default: "Environment"
+              Parameters:
+                  - Prefix
+            - Label:
+                  default: "VPC Configuration"
+              Parameters:
+                  - Zone1
+                  - Zone2
+            - Label:
+                  default: "EC2 Configuration"
+              Parameters:
+                  - KeyPairName
+        ParameterLabels:
+            Prefix:
+                default: "Prefix"
+            Zone1:
+                default: "Availability Zone 1"
+            Zone2:
+                default: "Availability Zone 2"
+            KeyPairName:
+                default: "EC2 Key Pair"
+
+Parameters:
+    Prefix:
+        Description: Name tag prefix that's added to all the resources
+        Type: String
+        Default: spoke1
+    Zone1:
+        Description: Availability Zone 1
+        Type: AWS::EC2::AvailabilityZone::Name
+        Default: us-east-1a
+    Zone2:
+        Description: Availability Zone 2
+        Type: AWS::EC2::AvailabilityZone::Name
+        Default: us-east-1b
+    KeyPairName:
+        Description: SSH Keypair Name to use for the App EC2 Instance
+        Type: AWS::EC2::KeyPair::KeyName
+
+Mappings:
+    AppImage:
+        us-east-1:
+            ubuntu2204: ami-0fc5d935ebf8bc3bc
+        us-east-2:
+            ubuntu2204: ami-0e83be366243f524a
+        us-west-1:
+            ubuntu2204: ami-0cbd40f694b804622
+        us-west-2:
+            ubuntu2204: ami-0efcece6bed30fd98
+        ca-central-1:
+            ubuntu2204: ami-06873c81b882339ac
+        eu-central-1:
+            ubuntu2204: ami-06dd92ecc74fdfb36
+        eu-north-1:
+            ubuntu2204: ami-0fe8bec493a81c7da
+        eu-west-1:
+            ubuntu2204: ami-0694d931cee176e7d
+        eu-west-2:
+            ubuntu1804: ami-0505148b3591e4c07
+        eu-west-3:
+            ubuntu1804: ami-00983e8a26e4c9bd9
+Resources:
+    SampleVPC:
+        Type: "AWS::EC2::VPC"
+        Properties:
+            CidrBlock: 10.0.0.0/16
+            Tags:
+                - Key: Name
+                  Value:
+                      Fn::Sub: "${Prefix}-vpc"
+    SampleInternetGateway:
+        Type: "AWS::EC2::InternetGateway"
+        Properties:
+            Tags:
+                - Key: Name
+                  Value:
+                      Fn::Sub: "${Prefix}-igw"
+    SampleIGWAttachment:
+        Type: AWS::EC2::VPCGatewayAttachment
+        Properties:
+            VpcId:
+                Ref: SampleVPC
+            InternetGatewayId:
+                Ref: SampleInternetGateway
+    SampleAppsSubnet1:
+        Type: AWS::EC2::Subnet
+        Properties:
+            AvailabilityZone:
+                Ref: Zone1
+            VpcId:
+                Ref: SampleVPC
+            CidrBlock: 10.0.0.0/24
+            Tags:
+                - Key: Name
+                  Value:
+                      Fn::Sub: "${Prefix}-z1-apps"
+    SampleAppsSubnet2:
+        Type: AWS::EC2::Subnet
+        Properties:
+            AvailabilityZone:
+                Ref: Zone2
+            VpcId:
+                Ref: SampleVPC
+            CidrBlock: 10.0.3.0/24
+            Tags:
+                - Key: Name
+                  Value:
+                      Fn::Sub: "${Prefix}-z2-apps"
+    RouteTableApps1:
+        Type: AWS::EC2::RouteTable
+        Properties:
+            VpcId:
+                Ref: SampleVPC
+            Tags:
+                - Key: Name
+                  Value:
+                      Fn::Sub: "${Prefix}-z1-apps"
+    RouteTableApps2:
+        Type: AWS::EC2::RouteTable
+        Properties:
+            VpcId:
+                Ref: SampleVPC
+            Tags:
+                - Key: Name
+                  Value:
+                      Fn::Sub: "${Prefix}-z2-apps"
+    InternetRouteApps1:
+        Type: AWS::EC2::Route
+        Properties:
+            DestinationCidrBlock: 0.0.0.0/0
+            GatewayId:
+                Ref: SampleInternetGateway
+            RouteTableId:
+                Ref: RouteTableApps1
+    InternetRouteApps2:
+        Type: AWS::EC2::Route
+        Properties:
+            DestinationCidrBlock: 0.0.0.0/0
+            GatewayId:
+                Ref: SampleInternetGateway
+            RouteTableId:
+                Ref: RouteTableApps2
+    AppsSubnetRouteTableAssociation1:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            RouteTableId:
+                Ref: RouteTableApps1
+            SubnetId:
+                Ref: SampleAppsSubnet1
+    AppsSubnetRouteTableAssociation2:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            RouteTableId:
+                Ref: RouteTableApps2
+            SubnetId:
+                Ref: SampleAppsSubnet2
+    SecurityGroupApps:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupName:
+                Fn::Sub: "${Prefix}-apps"
+            GroupDescription: "Security group for the apps, used by applications"
+            VpcId:
+                Ref: SampleVPC
+            SecurityGroupEgress:
+                - IpProtocol: -1
+                  FromPort: "0"
+                  ToPort: "0"
+                  CidrIp: 0.0.0.0/0
+            SecurityGroupIngress:
+                - IpProtocol: tcp
+                  FromPort: "22"
+                  ToPort: "22"
+                  CidrIp: 0.0.0.0/0
+                - IpProtocol: tcp
+                  FromPort: "80"
+                  ToPort: "80"
+                  CidrIp: 0.0.0.0/0
+                - IpProtocol: tcp
+                  FromPort: "8000"
+                  ToPort: "8000"
+                  CidrIp: 0.0.0.0/0
+                - IpProtocol: tcp
+                  FromPort: "443"
+                  ToPort: "443"
+                  CidrIp: 0.0.0.0/0
+            Tags:
+                - Key: Name
+                  Value:
+                      Fn::Sub: "${Prefix}-apps"
+    SpokeIAMRole:
+        Type: AWS::IAM::Role
+        Properties:
+            RoleName:
+                Fn::Sub: "${Prefix}-spoke-role"
+            AssumeRolePolicyDocument:
+                Version: 2012-10-17
+                Statement:
+                    - Effect: Allow
+                      Principal:
+                          Service:
+                              - ec2.amazonaws.com
+                      Action: sts:AssumeRole
+            Path: /
+            Policies:
+                - PolicyName: spoke-iam-policy
+                  PolicyDocument:
+                      Version: "2012-10-17"
+                      Statement:
+                          - Effect: Allow
+                            Action: "*"
+                            Resource: "*"
+    SpokeInstanceProfile:
+        Type: AWS::IAM::InstanceProfile
+        Properties:
+            InstanceProfileName:
+                Fn::Sub: "${Prefix}-instance-profile"
+            Path: /
+            Roles:
+                - !Ref SpokeIAMRole
+    AppInstance1:
+        Type: AWS::EC2::Instance
+        Properties:
+            AvailabilityZone:
+                Ref: Zone1
+            ImageId:
+                Fn::FindInMap: [AppImage, Ref: "AWS::Region", ubuntu2204]
+            InstanceType: t3a.small
+            IamInstanceProfile:
+                Ref: SpokeInstanceProfile
+            KeyName:
+                Ref: KeyPairName
+            NetworkInterfaces:
+                - AssociatePublicIpAddress: true
+                  DeviceIndex: 0
+                  SubnetId:
+                      Ref: SampleAppsSubnet1
+                  GroupSet:
+                      - Ref: SecurityGroupApps
+            Tags:
+                - Key: Name
+                  Value:
+                      Fn::Sub: "${Prefix}-z1-app"
+    AppInstance2:
+        Type: AWS::EC2::Instance
+        Properties:
+            AvailabilityZone:
+                Ref: Zone2
+            ImageId:
+                Fn::FindInMap: [AppImage, Ref: "AWS::Region", ubuntu2204]
+            InstanceType: t3a.small
+            IamInstanceProfile:
+                Ref: SpokeInstanceProfile
+            KeyName:
+                Ref: KeyPairName
+            NetworkInterfaces:
+                - AssociatePublicIpAddress: true
+                  DeviceIndex: 0
+                  SubnetId:
+                      Ref: SampleAppsSubnet2
+                  GroupSet:
+                      - Ref: SecurityGroupApps
+            Tags:
+                - Key: Name
+                  Value:
+                      Fn::Sub: "${Prefix}-z2-app"
+Outputs:
+    AppInstance1Ip:
+        Description: "AppInstance 1 IP"
+        Value:
+            Fn::Join:
+                [
+                    ", ",
+                    [
+                        Fn::GetAtt: AppInstance1.PrivateIp,
+                        Fn::GetAtt: AppInstance1.PublicIp,
+                    ],
+                ]
+    AppInstance2Ip:
+        Description: "AppInstance 2 IP"
+        Value:
+            Fn::Join:
+                [
+                    ", ",
+                    [
+                        Fn::GetAtt: AppInstance2.PrivateIp,
+                        Fn::GetAtt: AppInstance2.PublicIp,
+                    ],
+                ]
