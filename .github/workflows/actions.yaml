@@ -26,8 +26,10 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Write MCD API Key File
-        working-directory: ./terraform
         run: echo '${{ secrets.MCD_API_KEY }}' > ./cisco_mcd/mcd_api_key.json
+
+      - working-directory: terraform
+        run: cat ./cisco_mcd/mcd_api_key.json
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
@@ -38,17 +40,17 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Terraform init
-        working-directory: ./terraform
+        working-directory: terraform
         run: terraform init
 
       - name: Terraform Validate
-        working-directory: ./terraform
+        working-directory: terraform
         run: terraform validate
 
       - name: Terraform Plan
-        working-directory: ./terraform
+        working-directory: terraform
         run: terraform plan
 
       - name: Terraform Apply
-        working-directory: ./terraform
+        working-directory: terraform
         run: terraform apply -auto-approve
