@@ -5,6 +5,10 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   workflow_dispatch:
   # push:
@@ -17,7 +21,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: hashicorp/setup-terraform@v2
+      - name: Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::257344898502:role/github-oidc-Role-G3Hth2BOl4cU
+          aws-region: us-east-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.6
 
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -34,6 +47,9 @@ jobs:
         working-directory: ./terraform
         run: terraform validate
 
+      - name: Terraform Plan
+        run: terraform plan -input=false
+
       - name: Terraform Apply
         working-directory: ./terraform
-        run: terraform apply
+        run: terraform apply -auto-approve -input=false
