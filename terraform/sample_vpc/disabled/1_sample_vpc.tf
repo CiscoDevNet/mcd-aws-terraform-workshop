@@ -50,21 +50,21 @@ resource "aws_route_table" "sample_route_table" {
 }
 
 ## Step 7 - Disable this version of the sample route (towards internet gateway)
-# resource "aws_route" "sample_internet_route" {
-#   destination_cidr_block = "0.0.0.0/0"
-#   gateway_id         = aws_internet_gateway.sample_internet_gateway.id
-#   route_table_id     = aws_route_table.sample_route_table.id
-# }
-
-## Step 7 - Enable this version of the sample route (towards MCD transit gateway)
 resource "aws_route" "sample_internet_route" {
   destination_cidr_block = "0.0.0.0/0"
-  transit_gateway_id     = var.mcd_transit_gateway_id
+  gateway_id             = aws_internet_gateway.sample_internet_gateway.id
   route_table_id         = aws_route_table.sample_route_table.id
-  depends_on = [
-    ciscomcd_spoke_vpc.mcd_spoke
-  ]
 }
+
+# ## Step 7 - Enable this version of the sample route (towards MCD transit gateway)
+# resource "aws_route" "sample_internet_route" {
+#   destination_cidr_block = "0.0.0.0/0"
+#   transit_gateway_id     = var.mcd_transit_gateway_id
+#   route_table_id         = aws_route_table.sample_route_table.id
+#   depends_on = [
+#     ciscomcd_spoke_vpc.mcd_spoke
+#   ]
+# }
 
 resource "aws_route_table_association" "sample_subnet_route_table_association" {
   route_table_id = aws_route_table.sample_route_table.id
