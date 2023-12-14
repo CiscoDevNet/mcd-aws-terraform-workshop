@@ -51,6 +51,7 @@ resource "ciscomcd_gateway" "mcd_gateway" {
   wait_for_gateway_state = true
   depends_on = [
     ciscomcd_service_vpc.service_vpc
+    ciscomcd_policy_rule_set.mcd_egress_rule_set
   ]
 }
 

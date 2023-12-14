@@ -8,9 +8,9 @@ module "sample_vpc" {
   mcd_dns_query_log_config_id = module.cisco_mcd.mcd_dns_query_log_config_id
   mcd_s3_bucket               = module.cisco_mcd.mcd_s3_bucket
 
-  # ###  Step 7: Secure VPC  ###
-  # mcd_service_vpc_id     = module.cisco_mcd.mcd_service_vpc_id
-  # mcd_transit_gateway_id = module.cisco_mcd.mcd_transit_gateway_id
+  ###  Step 7: Secure VPC  ###
+  mcd_service_vpc_id     = module.cisco_mcd.mcd_service_vpc_id
+  mcd_transit_gateway_id = module.cisco_mcd.mcd_transit_gateway_id
 }
 
 module "cisco_mcd" {
