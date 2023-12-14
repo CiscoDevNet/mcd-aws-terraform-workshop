@@ -9,6 +9,7 @@ permissions:
 
 on:
   workflow_dispatch:
+  ## Disable running action on push for now
   # push:
   #   branches:
   #     - main
