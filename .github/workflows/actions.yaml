@@ -23,7 +23,7 @@ jobs:
       - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
-          role-to-assume: arn:aws:iam::257344898502:role/GitHubAction-AssumeRoleWithAction
+          role-to-assume: ${{ env.AWS_OIDC_IDP }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Checkout Repo
