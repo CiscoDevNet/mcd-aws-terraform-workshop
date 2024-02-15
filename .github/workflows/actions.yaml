@@ -23,7 +23,7 @@ jobs:
       - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
-          role-to-assume: ${{ env.AWS_OIDC_IDP }}
+          role-to-assume: ${{ env.AWS_OIDC_IDP_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Checkout Repo
