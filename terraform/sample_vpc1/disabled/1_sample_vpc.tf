@@ -1,6 +1,6 @@
-data "aws_key_pair" "aws_ssh_key_pair" {
-  key_pair_id = var.aws_ssh_key_pair_id
-}
+# data "aws_key_pair" "aws_ssh_key_pair" {
+#   key_pair_id = var.aws_ssh_key_pair.id
+# }
 
 data "aws_ami" "ubuntu2204" {
   most_recent = true
@@ -155,7 +155,7 @@ resource "aws_instance" "app_instance" {
   ami                         = data.aws_ami.ubuntu2204.id
   iam_instance_profile        = aws_iam_instance_profile.spoke_instance_profile.name
   instance_type               = "t2.nano"
-  key_name                    = data.aws_key_pair.aws_ssh_key_pair.key_name
+  key_name                    = var.aws_ssh_key_pair_name
   user_data                   = <<-EOT
                                 #!/bin/bash
                                 apt-get update

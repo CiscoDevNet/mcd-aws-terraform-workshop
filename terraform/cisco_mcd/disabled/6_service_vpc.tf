@@ -4,8 +4,8 @@ resource "aws_ec2_transit_gateway" "mcd_transit_gateway" {
   dns_support                     = "enable"
   transit_gateway_cidr_blocks     = []
   vpn_ecmp_support                = "enable"
-  tags                            = {
-    Name        = "mcd-service-vpc-tgw"
+  tags = {
+    Name = "mcd-service-vpc-tgw"
   }
   depends_on = [
     ciscomcd_cloud_account.mcd_cloud_account
@@ -13,8 +13,8 @@ resource "aws_ec2_transit_gateway" "mcd_transit_gateway" {
 }
 
 resource "ciscomcd_service_vpc" "service_vpc" {
-  name               = "mcd-service-vpc"
-  csp_account_name   = ciscomcd_cloud_account.mcd_cloud_account.name
+  name             = "mcd-service-vpc"
+  csp_account_name = ciscomcd_cloud_account.mcd_cloud_account.name
 
   availability_zones = [var.aws_availability_zone]
   cidr               = "10.100.0.0/16"
@@ -26,7 +26,7 @@ resource "ciscomcd_service_vpc" "service_vpc" {
 }
 
 data "aws_key_pair" "aws_ssh_key_pair" {
-    key_pair_id = var.aws_ssh_key_pair_id
+  key_name = var.aws_ssh_key_pair_name
 }
 
 resource "ciscomcd_policy_rule_set" "mcd_egress_rule_set" {
@@ -36,17 +36,17 @@ resource "ciscomcd_policy_rule_set" "mcd_egress_rule_set" {
 resource "ciscomcd_gateway" "mcd_gateway" {
   name                   = "mcd-egress-${data.aws_region.current.name}-gw-01"
   vpc_id                 = ciscomcd_service_vpc.service_vpc.id
-	aws_iam_role_firewall  = aws_iam_role.mcd_gateway_role.name
-	csp_account_name       = ciscomcd_cloud_account.mcd_cloud_account.name
-	gateway_image          = "23.10-02" // Via MCD admin portal **Administration** / **System**
-	instance_type          = "AWS_M5_LARGE"
-	max_instances = 3
-	min_instances = 1
-	mode                   = "HUB"
-	policy_rule_set_id     = ciscomcd_policy_rule_set.mcd_egress_rule_set.id
-	region                 = data.aws_region.current.name
-	security_type          = "EGRESS"
-	ssh_key_pair           = data.aws_key_pair.aws_ssh_key_pair.key_name
+  aws_iam_role_firewall  = aws_iam_role.mcd_gateway_role.name
+  csp_account_name       = ciscomcd_cloud_account.mcd_cloud_account.name
+  gateway_image          = "23.10-02" // Via MCD admin portal **Administration** / **System**
+  instance_type          = "AWS_M5_LARGE"
+  max_instances          = 3
+  min_instances          = 1
+  mode                   = "HUB"
+  policy_rule_set_id     = ciscomcd_policy_rule_set.mcd_egress_rule_set.id
+  region                 = data.aws_region.current.name
+  security_type          = "EGRESS"
+  ssh_key_pair           = data.aws_key_pair.aws_ssh_key_pair.key_name
   gateway_state          = "ACTIVE"
   wait_for_gateway_state = true
   depends_on = [

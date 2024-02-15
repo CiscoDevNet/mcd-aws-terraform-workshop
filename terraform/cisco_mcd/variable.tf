@@ -1,6 +1,6 @@
 variable "mcd_deployment_name" {
   description = "MCD cloud service instance (prod1 for main production)"
-  default="prod1"
+  default     = "prod1"
 }
 
 variable "mcd_controller_aws_account_number" {
@@ -13,10 +13,10 @@ variable "mcd_cloud_account_name" {
 }
 
 variable "aws_availability_zone" {
-    description = "AWS availability zone in which to create the Service VPC Transit Gateway instance."
-    type        = string
+  description = "AWS availability zone in which to create the Service VPC Transit Gateway instance."
+  type        = string
 }
 
-variable aws_ssh_key_pair_id {
+variable "aws_ssh_key_pair_name" {
   description = "SSH Keypair ID used for App EC2 Instances."
 }
