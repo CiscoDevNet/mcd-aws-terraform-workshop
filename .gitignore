@@ -36,3 +36,4 @@ terraform.rc
 
 # Ignore Multicloud Defense API key file
 mcd_api_key.json
+terraform/.terraform.lock.hcl

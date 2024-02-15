@@ -12,7 +12,12 @@ variable "mcd_cloud_account_name" {
   description = "Name used to represent the AWS Account in the MCD Dashboard."
 }
 
-variable "aws_availability_zone" {
+variable "aws_availability_zone1" {
+  description = "AWS availability zone in which to create the Service VPC Transit Gateway instance."
+  type        = string
+}
+
+variable "aws_availability_zone2" {
   description = "AWS availability zone in which to create the Service VPC Transit Gateway instance."
   type        = string
 }

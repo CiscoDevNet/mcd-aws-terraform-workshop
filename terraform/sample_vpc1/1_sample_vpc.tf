@@ -1,7 +1,3 @@
-# data "aws_key_pair" "aws_ssh_key_pair" {
-#   key_pair_id = var.aws_ssh_key_pair.id
-# }
-
 data "aws_ami" "ubuntu2204" {
   most_recent = true
   owners      = ["099720109477"] # Canonical
@@ -33,42 +29,78 @@ resource "aws_internet_gateway_attachment" "sample_igw_attachment" {
   vpc_id              = aws_vpc.sample_vpc.id
 }
 
-resource "aws_subnet" "sample_subnet" {
-  availability_zone = var.aws_availability_zone
+resource "aws_subnet" "sample_subnet1" {
+  availability_zone = var.aws_availability_zone1
   vpc_id            = aws_vpc.sample_vpc.id
-  cidr_block        = "10.0.0.0/16"
+  cidr_block        = "10.0.0.0/24"
   tags = {
-    Name = "${var.prefix}-subnet"
+    Name = "${var.prefix}-z1-subnet"
   }
 }
 
-resource "aws_route_table" "sample_route_table" {
+resource "aws_subnet" "sample_subnet2" {
+  availability_zone = var.aws_availability_zone2
+  vpc_id            = aws_vpc.sample_vpc.id
+  cidr_block        = "10.0.3.0/24"
+  tags = {
+    Name = "${var.prefix}-z2-subnet"
+  }
+}
+
+resource "aws_route_table" "sample_route_table1" {
   vpc_id = aws_vpc.sample_vpc.id
   tags = {
-    Name = "${var.prefix}-rt"
+    Name = "${var.prefix}-z1-rt"
   }
 }
 
-## Step 7 - Disable this version of the sample route (towards internet gateway)
-resource "aws_route" "sample_internet_route" {
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = aws_internet_gateway.sample_internet_gateway.id
-  route_table_id         = aws_route_table.sample_route_table.id
+resource "aws_route_table" "sample_route_table2" {
+  vpc_id = aws_vpc.sample_vpc.id
+  tags = {
+    Name = "${var.prefix}-z2-rt"
+  }
 }
 
-# ## Step 7 - Enable this version of the sample route (towards MCD transit gateway)
-# resource "aws_route" "sample_internet_route" {
+# --- Step 6: Secure VPC --- Disable the following two routes (towards internet gateway)
+resource "aws_route" "sample_internet_route1" {
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.sample_internet_gateway.id
+  route_table_id         = aws_route_table.sample_route_table1.id
+}
+
+resource "aws_route" "sample_internet_route2" {
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.sample_internet_gateway.id
+  route_table_id         = aws_route_table.sample_route_table2.id
+}
+
+# --- Step 6: Secure VPC --- Enable the following two routes (towards MCD transit gateway)
+# resource "aws_route" "sample_internet_route1" {
 #   destination_cidr_block = "0.0.0.0/0"
 #   transit_gateway_id     = var.mcd_transit_gateway_id
-#   route_table_id         = aws_route_table.sample_route_table.id
+#   route_table_id         = aws_route_table.sample_route_table1.id
 #   depends_on = [
 #     ciscomcd_spoke_vpc.mcd_spoke
 #   ]
 # }
 
-resource "aws_route_table_association" "sample_subnet_route_table_association" {
-  route_table_id = aws_route_table.sample_route_table.id
-  subnet_id      = aws_subnet.sample_subnet.id
+# resource "aws_route" "sample_internet_route2" {
+#   destination_cidr_block = "0.0.0.0/0"
+#   transit_gateway_id     = var.mcd_transit_gateway_id
+#   route_table_id         = aws_route_table.sample_route_table2.id
+#   depends_on = [
+#     ciscomcd_spoke_vpc.mcd_spoke
+#   ]
+# }
+
+resource "aws_route_table_association" "sample_subnet_route_table_association1" {
+  route_table_id = aws_route_table.sample_route_table1.id
+  subnet_id      = aws_subnet.sample_subnet1.id
+}
+
+resource "aws_route_table_association" "sample_subnet_route_table_association2" {
+  route_table_id = aws_route_table.sample_route_table2.id
+  subnet_id      = aws_subnet.sample_subnet2.id
 }
 
 resource "aws_security_group" "sample_security_group" {
@@ -149,9 +181,9 @@ resource "aws_iam_instance_profile" "spoke_instance_profile" {
   role = aws_iam_role.spoke_iam_role.name
 }
 
-resource "aws_instance" "app_instance" {
+resource "aws_instance" "app_instance1" {
   associate_public_ip_address = true
-  availability_zone           = var.aws_availability_zone
+  availability_zone           = var.aws_availability_zone1
   ami                         = data.aws_ami.ubuntu2204.id
   iam_instance_profile        = aws_iam_instance_profile.spoke_instance_profile.name
   instance_type               = "t2.nano"
@@ -167,12 +199,39 @@ resource "aws_instance" "app_instance" {
                                 <p>Welcome to App Instance 1</p>
                                 </body></html>
                                 EOT
-  subnet_id                   = aws_subnet.sample_subnet.id
+  subnet_id                   = aws_subnet.sample_subnet1.id
   vpc_security_group_ids      = [aws_security_group.sample_security_group.id]
   tags = {
-    Name = "${var.prefix}-app"
-    // Step ??? - Custom Security Policies
+    Name = "${var.prefix}-z1-app"
+    # --- Step 7: Create custom policies ---
     Category = "prod"
+  }
+}
+
+resource "aws_instance" "app_instance2" {
+  associate_public_ip_address = true
+  availability_zone           = var.aws_availability_zone2
+  ami                         = data.aws_ami.ubuntu2204.id
+  iam_instance_profile        = aws_iam_instance_profile.spoke_instance_profile.name
+  instance_type               = "t2.nano"
+  key_name                    = var.aws_ssh_key_pair_name
+  user_data                   = <<-EOT
+                                #!/bin/bash
+                                apt-get update
+                                apt-get upgrade -y
+                                apt-get install -y apache2
+                                apt-get install -y wget
+                                cat <<EOF > /var/www/html/index.html
+                                <html><body><h1>Hello World</h1>
+                                <p>Welcome to App Instance 1</p>
+                                </body></html>
+                                EOT
+  subnet_id                   = aws_subnet.sample_subnet2.id
+  vpc_security_group_ids      = [aws_security_group.sample_security_group.id]
+  tags = {
+    Name = "${var.prefix}-z2-app"
+    # --- Step 7: Create custom policies ---
+    Category = "dev"
   }
 }
 

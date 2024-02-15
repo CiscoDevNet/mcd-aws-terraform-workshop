@@ -1,4 +1,9 @@
-variable "aws_availability_zone" {
+variable "aws_availability_zone1" {
+  description = "AWS availability zone in which to create VPCs."
+  type        = string
+}
+
+variable "aws_availability_zone2" {
   description = "AWS availability zone in which to create VPCs."
   type        = string
 }
