@@ -3,7 +3,25 @@ Sample Terraform scripts and GitHub Actions config demonstrating Cisco Multiclou
 
 ## Getting Started
 
-### Fork the Project Repository
+### AWS - Setup GitHub OIDC Auth
+
+### AWS - Create S3 Bucket for Terraform State
+
+1. Navigate/login to the AWS Secure Storage Service (S3)
+
+1. Create a new bucket.
+
+   Be sure to pick a name that is [unique across all of AWS](https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html), e.g. based on your email: 
+   
+   ```
+   mcd-aws-terraform-workshop-email.example.com
+   ```
+
+   Enable bucket versioning.
+
+   You can leave other settings at their defaults.
+
+### Fork the GitHub Project Repository
 
 1. Open a new browser tab and navigate to: https://github.com/CiscoDevNet/mcd-aws-terraform-workshop
 
@@ -28,3 +46,7 @@ Sample Terraform scripts and GitHub Actions config demonstrating Cisco Multiclou
    * **MCD_API_KEY**: Paste in the full JSON content of your Cisco Multicloud Defense API key file.
 
    * **AWS_OIDC_IDP_ROLE_ARN**: The ARN of the AWS OIDC IdP created above.
+
+   * **AWS_S3_BUCKET_NAME**: The name of the Terraform backend S3 bucket created previously.
+
+

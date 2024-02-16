@@ -23,7 +23,7 @@ jobs:
       - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
-          role-to-assume: ${{ env.AWS_OIDC_IDP_ROLE_ARN }}
+          role-to-assume: ${{ secrets.AWS_OIDC_IDP_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Checkout Repo
@@ -37,6 +37,10 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.6.6
+
+      - name: Update Terraform S3 backend bucket name
+        working-directory: terraform
+        run: sed -i 's/PLACEHOLDER/${{ secrets.AWS_S3_BUCKET_NAME }}/' provider.tf 
 
       - name: Terraform init
         working-directory: terraform

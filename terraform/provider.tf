@@ -9,7 +9,7 @@ terraform {
 
   backend "s3" {
     # Change this to a unique bucket name
-    bucket = "mcd-terraform-workshop-email-example-com"
+    bucket = "PLACEHOLDER"
     key    = "terraform/terraform.tfstate"
     region = "us-east-1"
   }
