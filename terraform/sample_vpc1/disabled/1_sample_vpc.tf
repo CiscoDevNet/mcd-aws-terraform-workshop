@@ -176,7 +176,7 @@ resource "aws_iam_role" "spoke_iam_role" {
 }
 
 resource "aws_iam_instance_profile" "spoke_instance_profile" {
-  name = "${var.prefix}-instance-profile"
+  name = aws_iam_role.spoke_iam_role.name
   path = "/"
   role = aws_iam_role.spoke_iam_role.name
 }
@@ -203,7 +203,6 @@ resource "aws_instance" "app_instance1" {
   vpc_security_group_ids      = [aws_security_group.sample_security_group.id]
   tags = {
     Name = "${var.prefix}-z1-app"
-    # --- Step 7: Create custom policies ---
     Category = "prod"
   }
 }
@@ -230,7 +229,6 @@ resource "aws_instance" "app_instance2" {
   vpc_security_group_ids      = [aws_security_group.sample_security_group.id]
   tags = {
     Name = "${var.prefix}-z2-app"
-    # --- Step 7: Create custom policies ---
     Category = "dev"
   }
 }

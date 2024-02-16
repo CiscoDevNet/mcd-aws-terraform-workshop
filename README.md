@@ -1,5 +1,6 @@
 # mcd-aws-terraform-workshop
-Sample Terraform scripts and GitHub Actions config demonstrating Cisco Multicloud Defense onboarding/discovery/deployment/protection.
+
+Sample Terraform scripts and GitHub Action demonstrating Cisco Multicloud Defense onboarding/discovery/deployment/protection in an infrastructure-as-code scenario.
 
 ## Getting Started
 
@@ -35,7 +36,7 @@ Sample Terraform scripts and GitHub Actions config demonstrating Cisco Multiclou
 
     Go ahead and enable workflows.
 
-### Create Actions Environment Secrets
+### Create Actions Secrets
 
 1. In the forked GitHub repo, select **Settings / Secrets and variables / Actions**.
 
@@ -47,6 +48,6 @@ Sample Terraform scripts and GitHub Actions config demonstrating Cisco Multiclou
 
    * **AWS_OIDC_IDP_ROLE_ARN**: The ARN of the AWS OIDC IdP created above.
 
-   * **AWS_S3_BUCKET_NAME**: The name of the Terraform backend S3 bucket created previously.
+   * **AWS_S3_BUCKET_NAME**: The name of the Terraform backend S3 bucket created above.
 
 
