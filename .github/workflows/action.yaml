@@ -1,8 +1,5 @@
 name: Terraform Apply
 
-env:
-  AWS_REGION: us-east-1
-
 permissions:
   id-token: write
   contents: read
@@ -24,7 +21,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v3
         with:
           role-to-assume: ${{ secrets.AWS_OIDC_IDP_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -36,7 +33,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.6.6
+          terraform_version: 1.7.3
 
       - name: Update Terraform S3 backend bucket name
         working-directory: terraform

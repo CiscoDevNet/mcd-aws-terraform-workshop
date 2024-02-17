@@ -48,6 +48,8 @@ Sample Terraform scripts and GitHub Action demonstrating Cisco Multicloud Defens
 
    * **AWS_OIDC_IDP_ROLE_ARN**: The ARN of the AWS OIDC IdP created above.
 
+   * **AWS_REGION**: The workshop assumes using `us-east-1`.
+
    * **AWS_S3_BUCKET_NAME**: The name of the Terraform backend S3 bucket created above.
 
 
