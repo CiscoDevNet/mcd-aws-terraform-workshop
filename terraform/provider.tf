@@ -1,9 +1,8 @@
 terraform {
   required_providers {
-    # --- Step 2: Onboard with Cisco Multicloud Defense ---
+    ## --- Step 2: Onboard with Cisco Multicloud Defense ---
     # ciscomcd = {
     #   source = "ciscodevnet/ciscomcd"
-    #   # version = "0.2.4"
     # }
   }
 
@@ -15,7 +14,7 @@ terraform {
   }
 }
 
-# --- Step 2: Onboard with Cisco Multicloud Defense ---
+## --- Step 2: Onboard with Cisco Multicloud Defense ---
 # provider "ciscomcd" {
 #   api_key_file = file("cisco_mcd/mcd_api_key.json")
 # }
