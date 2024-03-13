@@ -47,10 +47,6 @@ resource "aws_subnet" "sample_subnet2" {
   }
 }
 
-resource "aws_ec2_instance_connect_endpoint" "sample_ec2_instance_connect_endpoint" {
-  subnet_id = aws_subnet.sample_subnet1.id
-}
-
 resource "aws_route_table" "sample_route_table1" {
   vpc_id = aws_vpc.sample_vpc.id
   tags = {
@@ -118,12 +114,6 @@ resource "aws_security_group" "sample_security_group" {
   }
   ingress {
     protocol    = "tcp"
-    from_port   = 22
-    to_port     = 22
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  ingress {
-    protocol    = "tcp"
     from_port   = 80
     to_port     = 80
     cidr_blocks = ["0.0.0.0/0"]
@@ -186,7 +176,7 @@ resource "aws_iam_instance_profile" "spoke_instance_profile" {
 }
 
 resource "aws_instance" "app_instance1" {
-  associate_public_ip_address = false
+  associate_public_ip_address = true
   availability_zone           = var.aws_availability_zone1
   ami                         = data.aws_ami.ubuntu2204.id
   iam_instance_profile        = aws_iam_instance_profile.spoke_instance_profile.name
@@ -212,7 +202,7 @@ resource "aws_instance" "app_instance1" {
 }
 
 resource "aws_instance" "app_instance2" {
-  associate_public_ip_address = false
+  associate_public_ip_address = true
   availability_zone           = var.aws_availability_zone2
   ami                         = data.aws_ami.ubuntu2204.id
   iam_instance_profile        = aws_iam_instance_profile.spoke_instance_profile.name
