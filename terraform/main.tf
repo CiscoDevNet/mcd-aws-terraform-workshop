@@ -10,7 +10,7 @@ module "sample_vpc" {
   # mcd_s3_bucket                     = module.cisco_mcd.mcd_s3_bucket
   # mcd_controller_aws_account_number = var.mcd_controller_aws_account_number
 
-  # ---  Step 6: Secure VPC  ---
+  # ---  Step 6: Secure Sample VPC  ---
   # mcd_service_vpc_id     = module.cisco_mcd.mcd_service_vpc_id
   # mcd_transit_gateway_id = module.cisco_mcd.mcd_transit_gateway_id
 }
