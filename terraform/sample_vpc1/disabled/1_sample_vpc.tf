@@ -186,6 +186,7 @@ resource "aws_iam_instance_profile" "spoke_instance_profile" {
 }
 
 resource "aws_instance" "app_instance1" {
+  associate_public_ip_address = false
   availability_zone           = var.aws_availability_zone1
   ami                         = data.aws_ami.ubuntu2204.id
   iam_instance_profile        = aws_iam_instance_profile.spoke_instance_profile.name
@@ -211,6 +212,7 @@ resource "aws_instance" "app_instance1" {
 }
 
 resource "aws_instance" "app_instance2" {
+  associate_public_ip_address = false
   availability_zone           = var.aws_availability_zone2
   ami                         = data.aws_ami.ubuntu2204.id
   iam_instance_profile        = aws_iam_instance_profile.spoke_instance_profile.name
