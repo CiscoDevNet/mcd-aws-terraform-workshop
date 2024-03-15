@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     ciscomcd = {
-      source = "ciscodevnet/ciscomcd"
+      source = "CiscoDevNet/ciscomcd"
     }
   }
 
