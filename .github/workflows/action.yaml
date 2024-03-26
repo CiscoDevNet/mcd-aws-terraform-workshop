@@ -5,6 +5,7 @@ permissions:
   contents: read
 
 on:
+  # Enable manual workflow trigger
   workflow_dispatch:
   ## Disable running action on push for now
   # push:

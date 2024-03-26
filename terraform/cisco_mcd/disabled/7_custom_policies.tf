@@ -41,10 +41,12 @@ resource "ciscomcd_profile_urlfilter" "url_github_profile" {
     return_status = 503
   }
   uncategorized_url_filter {
-    policy        = "Allow Log"
+    policy        = "Deny Log"
+    return_status = 503
   }
   default_url_filter {
-    policy        = "Allow Log"
+    policy        = "Deny No Log"
+    return_status = 503
   }
   deny_response = "The URL being accessed has been blocked for security reasons"
   depends_on    = [ciscomcd_cloud_account.mcd_cloud_account]
@@ -94,7 +96,7 @@ resource "ciscomcd_policy_rules" "egress_policy_rules_custom" {
     network_intrusion_profile = data.ciscomcd_profile_network_intrusion.ciscomcd_sample_ips_balanced_alert.id
     dlp_profile               = ciscomcd_profile_dlp.block-social-security_profile.id
     url_filter                = ciscomcd_profile_urlfilter.url_github_profile.id
-    action                    = "Allow Log"
+    action                    = "Deny Log"
     state       = "ENABLED"
   }
   rule {
