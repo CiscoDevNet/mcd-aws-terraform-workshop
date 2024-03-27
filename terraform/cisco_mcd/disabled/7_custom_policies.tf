@@ -1,21 +1,21 @@
 resource "ciscomcd_address_object" "tag_prod_address" {
   name             = "tag-prod"
-  csp_account_name = ciscomcd_cloud_account.mcd_cloud_account.name
   type             = "DYNAMIC_USER_DEFINED_TAG"
+  csp_account_name = ciscomcd_cloud_account.mcd_cloud_account.name
   tag_list {
-    tag_key       = "Category"
-    tag_value     = "prod"
-    resource_type = "RESOURCE_INSTANCE"
+    tag_key        = "Category"
+    tag_value      = "prod"
+    resource_type  = "RESOURCE_INSTANCE"
   }
   depends_on = [ciscomcd_cloud_account.mcd_cloud_account]
 }
 
 resource "ciscomcd_address_object" "aws_services_address" {
   name                  = "aws-services"
-  csp_account_name      = ciscomcd_cloud_account.mcd_cloud_account.name
-  region                = data.aws_region.current.name
-  service_endpoint_name = "AMAZON"
   type                  = "DYNAMIC_SERVICE_ENDPOINTS"
+  csp_account_name      = ciscomcd_cloud_account.mcd_cloud_account.name
+  service_endpoint_name = "AMAZON"
+  region                = data.aws_region.current.name
   depends_on            = [ciscomcd_cloud_account.mcd_cloud_account]
 }
 
@@ -88,7 +88,7 @@ resource "ciscomcd_policy_rules" "egress_policy_rules_custom" {
     state       = "ENABLED"
   }
   rule {
-    name                      = "tag-prod"
+    name                      = "egress-prod"
     type                      = "ForwardProxy"
     service                   = data.ciscomcd_service_object.egress_forward_proxy_service.id
     source                    = ciscomcd_address_object.tag_prod_address.id
@@ -96,7 +96,7 @@ resource "ciscomcd_policy_rules" "egress_policy_rules_custom" {
     network_intrusion_profile = data.ciscomcd_profile_network_intrusion.ciscomcd_sample_ips_balanced_alert.id
     dlp_profile               = ciscomcd_profile_dlp.block-social-security_profile.id
     url_filter                = ciscomcd_profile_urlfilter.url_github_profile.id
-    action                    = "Deny Log"
+    action                    = "Allow Log"
     state       = "ENABLED"
   }
   rule {
@@ -113,7 +113,7 @@ resource "ciscomcd_policy_rules" "egress_policy_rules_custom" {
   rule {
     name                 = "egress-udp-forwarding-allow"
     type                 = "Forwarding"
-    service              = data.ciscomcd_service_object.ciscomcd_sample_egress_forwarding_snat.id
+    service              = data.ciscomcd_service_object.ciscomcd_sample_egress_udp_forwarding_snat.id
     source               = data.ciscomcd_address_object.any_address.id
     destination          = data.ciscomcd_address_object.any_address.id
     malicious_ip_profile = data.ciscomcd_profile_malicious_ip.ciscomcd_sample_malicious_ips.id
@@ -126,5 +126,4 @@ resource "ciscomcd_policy_rules" "egress_policy_rules_custom" {
     ciscomcd_cloud_account.mcd_cloud_account
   ]
 }
-
 
