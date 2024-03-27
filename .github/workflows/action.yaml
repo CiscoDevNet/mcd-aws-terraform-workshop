@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v3
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_OIDC_IDP_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
@@ -32,9 +32,9 @@ jobs:
         run: echo '${{ secrets.MCD_API_KEY }}' > cisco_mcd/mcd_api_key.json
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.7.3
+          terraform_version: 1.7.5
 
       - name: Update Terraform S3 backend bucket name
         working-directory: terraform
