@@ -75,7 +75,7 @@ resource "ciscomcd_gateway" "mcd_gateway" {
   vpc_id                 = ciscomcd_service_vpc.service_vpc.id
   aws_iam_role_firewall  = aws_iam_role.mcd_gateway_role.name
   csp_account_name       = ciscomcd_cloud_account.mcd_cloud_account.name
-  gateway_image          = "23.10-02" // Via MCD admin portal **Administration** / **System**
+  gateway_image          = "24.02-01" // Via MCD admin portal **Administration** / **System**
   instance_type          = "AWS_M5_LARGE"
   max_instances          = 3
   min_instances          = 1
