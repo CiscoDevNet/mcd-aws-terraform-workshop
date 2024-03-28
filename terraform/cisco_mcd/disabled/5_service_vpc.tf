@@ -87,6 +87,9 @@ resource "ciscomcd_gateway" "mcd_gateway" {
   region                 = data.aws_region.current.name
   security_type          = "EGRESS"
   ssh_key_pair           = data.aws_key_pair.aws_ssh_key_pair.key_name
+  depends_on             = [
+    ciscomcd_policy_rule_set.mcd_egress_rule_set_allow_all
+  ]
 }
 
 output "mcd_transit_gateway_id" {
