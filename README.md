@@ -2,54 +2,51 @@
 
 Sample Terraform scripts and GitHub Action demonstrating Cisco Multicloud Defense onboarding/discovery/deployment/protection in an infrastructure-as-code scenario.
 
+Companion to Cisco Devnet learning lab: [Cisco Multicloud Defense - Terraform](https://devnetapps.cisco.com/learning/labs/mcd-terraform)
+
+See:
+
+[Cisco Multicloud Defense](https://www.cisco.com/site/us/en/products/security/multicloud-defense/index.html)
+
+[CiscoDevNet/ciscomcd - Terraform provider](https://registry.terraform.io/providers/CiscoDevNet/ciscomcd/latest/docs)
+
 ## Getting Started
 
-### AWS - Setup GitHub OIDC Auth
+Detailed, step-by-step instructions can be found in the associated DevNet Learning Lab: [Cisco Multicloud Defense - Terraform](https://devnetapps.cisco.com/learning/labs/mcd-terraform)
 
-### AWS - Create S3 Bucket for Terraform State
+At a high level:
 
-1. Navigate/login to the AWS Secure Storage Service (S3)
+1. Fork this repository on GitHub.
 
-1. Create a new bucket.
+1. Enable GitHub Actions.
 
-   Be sure to pick a name that is [unique across all of AWS](https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html), e.g. based on your email: 
-   
-   ```
-   mcd-aws-terraform-workshop-email.example.com
-   ```
+1. Create/download a Cisco Multicloud Defense API Key with admin/read-write role.
 
-   Enable bucket versioning.
+1. Configure AWS IAM with GitHub OIDC identity provider/role for the forked repo.
 
-   You can leave other settings at their defaults.
+1. Create an AWS EC2 authentication key pair with name: `mcd-lab`
 
-### Fork the GitHub Project Repository
+1. Create an AWS S3 bucket as storage for Terraform state.
 
-1. Open a new browser tab and navigate to: https://github.com/CiscoDevNet/mcd-aws-terraform-workshop
+1. Create GitHub action repo secrets:
 
-1. Make sure you are logged into GitHub.
+   * **AWS_REGION:** `us-east-1`
 
-1. In the upper-right, click on **Fork**.
+   * **AWS_OIDC_IDP_ROLE_ARN**
 
-   You can leave the defaults as-is.
+   * **AWS_S3_BUCKET_NAME**
 
-1. Once the forked repository page appears, select the **Actions** tab.
+   * **MCD_API_KEY:** JSON contents of MCD API key file
 
-    Go ahead and enable workflows.
+   and repo variable:
 
-### Create Actions Secrets
+   * **ACTIONS_RUNNER_DEBUG:** `true`
 
-1. In the forked GitHub repo, select **Settings / Secrets and variables / Actions**.
+1. GitHub action basic functionality can be verified by running the `Terraform apply` action via a manual run (no resources should get created).  Commit-based dispatch can be enabled by uncommenting the `push:` section of `action.yaml`.
 
-1. Under **Repository Secrets** create the following:
+1. Once verified, create a new branch (`Baseline_Cleanup`) before proceeding with the lab to create resources - manually running the GitHub action against this baseline branch will destroy all resources created by the lab.
 
-   * **ACTIONS_RUNNER_DEBUG**: `true`
+The learning lab then proceeds to create a sample VPC and MCD service VPC and enable various security policies in 7 steps.  Each step involves moving a Terraform config file from a module's `disabled/` folder into the parent module folder (based on the leading number of the file name), and/or uncommenting/commenting out lines in specific Terraform files (marked with inline comments, e.g. `Step 2: Onboard with Cisco Multicloud Defense`).
 
-   * **MCD_API_KEY**: Paste in the full JSON content of your Cisco Multicloud Defense API key file.
-
-   * **AWS_OIDC_IDP_ROLE_ARN**: The ARN of the AWS OIDC IdP created above.
-
-   * **AWS_REGION**: The workshop assumes using `us-east-1`.
-
-   * **AWS_S3_BUCKET_NAME**: The name of the Terraform backend S3 bucket created above.
 
 
